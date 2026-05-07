@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Portfolio V2</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="author" content="">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="stylesheet" type="text/css" href="css/normalize.css">
+	<link rel="stylesheet" type="text/css" href="icomoon/icomoon.css">
+    <link rel="stylesheet" type="text/css" href="css/vendor.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+	<!-- script
+	================================================== -->
+	<script src="js/modernizr.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Закрытие по крестику и фону
+            var modal = document.getElementById('portfolioModal');
+            if (!modal) return;
+
+            modal.querySelector('.modal-close').addEventListener('click', function() {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+
+            modal.querySelector('.modal-backdrop').addEventListener('click', function() {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+
+            // Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    document.getElementById('portfolioModal').classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // Карточки — блокируем переходы + вешаем открытие
+            document.querySelectorAll('.tab-element figure[data-project-id]').forEach(function(f) {
+                var id = f.getAttribute('data-project-id');
+
+                f.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Проверяем, загрузился ли основной скрипт с данными
+                    if (typeof openPortfolioModal === 'function') {
+                        openPortfolioModal(id);
+                    }
+                });
+            });
+        });
+    </script>
+    <!-- ============================================ -->
+
+</head>
+<body>
+
+<div id="entire-wrapper">
+
+<header id="header">
+	<div class="header-wrap">
+		<div class="main-logo">
+			<a href="#">
+				<img src="images/main-logo.png" alt="logo">
+			</a>
+		</div><!--main-logo-->
+
+		<nav id="navbar">
+			<div class="top-menu" id="navigation">
+				<ul class="menu-list">
+					<li class="menu-item active"><a href="#home" data-effect="Home">Home</a></li>
+					<li class="menu-item"><a href="#about-me" class="nav-link" data-effect="About Me">About</a></li>
+					<li class="menu-item"><a href="#portfolio" class="nav-link" data-effect="Portfolio">Portfolio</a></li>
+					<li class="menu-item"><a href="#contact" class="nav-link" data-effect="Contact">Contact</a></li>
+				</ul>
+
+				<div class="menu-icon">
+					<a href="javascript:void(0);" class="bar-icon" onclick="e">
+				    	<i class="icon icon-segment"></i>
+				 	</a>
+					<a href="javascript:void(0);" class="bar-icon" onclick="e">
+				    	<i class="icon icon-close"></i>
+				 	</a>
+				</div>
+
+			</div>
+		</nav>
+
+		<div class="lang-item">
+    		<div class="lang-dropdown">
+				<button class="lang-btn" id="langBtn">
+            		EN <i class="icon icon-arrow-down"></i>
+				</button>
+        		<div class="lang-menu" id="langMenu">
+            		<div data-lang="en">en English</div>
+            		<div data-lang="ru">ru Русский</div>
+				</div>
+			</div>
+		</div>
+
+	</div><!--header-wrap-->
+</header>
+
+<div id="billboard">
+	<img src="images/main-banner.jpg" alt="post" class="banner-image">
+	<div class="banner-content">
+
+		<div class="banner-header">
+			<h1>Hello, I’m <span class="colored">Pavel Grishin</span></h1>
+			<p>Professional Python Developer. I provide clean, maintainable and efficient code.</p>
+			<div class="btn-wrap">
+				<a href="#" class="btn-outline-orange btn-pill">Get in touch</a>
+			</div>
+			<div class="socila-links">
+    		<ul>
+        		<li>
+            		<a href="https://github.com/PavelGRI333" target="_blank">
+                		<span class="iconify" data-icon="mdi:github"></span>
+            		</a>
+        		</li>
+        		<li>
+            		<a href="https://linkedin.com/in/PavelGRI333" target="_blank">
+                		<span class="iconify" data-icon="mdi:linkedin"></span>
+            		</a>
+        		</li>
+        		<li>
+            		<a href="https://t.me/pavelgrishin" target="_blank">
+                		<span class="iconify" data-icon="mdi:telegram"></span>
+            		</a>
+        		</li>
+    		</ul>
+			</div><!--socila-links-->
+		</div><!--banner-header-->
+
+	</div>
+</div><!--billboard-->
+
+<main id="main">
+
+<section id="about-me">
+	<div class="container">
+		<div class="row">
+			<div class="inner-content">
+				<div class="section-header">
+					<h2 class="section-title">About Me</h2>
+				</div>
+				<div class="person-information">
+					<div class="description">
+						<p>🐍 Python developer specializing in <strong>web scraping, automation, and API development</strong>.</p>
+						<p><strong>🛠 Core:</strong> parsing (protected sites), business automation (WB/Ozon), backend (FastAPI/Django), chatbots, scripts.</p>
+						<p><strong>💡 How I work:</strong> result-driven, clean code, always in touch.<br>
+						<strong>⚙ Stack:</strong> Python, FastAPI, PostgreSQL, Docker, Playwright, Git.</p>
+						<div class="general-button">
+							<div class="btn-wrap">
+								<a href="#" class="btn-accent">Hire Me</a>
+							</div>
+							<div class="btn-wrap">
+								<a href="#" class="btn-outline-dark">Download CV</a>
+							</div>
+						</div>
+					</div>
+					<div class="skill-chart">
+						<ul class="skill-chart-list">
+    						<li>
+								<div class="skill-title">Python 3.12</div>
+								<span class="skill ninety-percent"></span>
+    						</li>
+    						<li>
+        						<div class="skill-title">FastAPI / Django</div>
+        						<span class="skill eighty-percent"></span>
+													</li>
+    						<li>
+        						<div class="skill-title">Playwright / requests</div>
+        						<span class="skill eighty-five-percent"></span>
+    						</li>
+    						<li>
+        						<div class="skill-title">PostgreSQL / SQLAlchemy</div>
+        						<span class="skill seventy-five-percent"></span>
+    						</li>
+    						<li>
+       						<div class="skill-title">Docker / Docker Compose</div>
+        						<span class="skill seventy-percent"></span>
+    						</li>
+    						<li>
+        						<div class="skill-title">Git / GitHub</div>
+        						<span class="skill eighty-percent"></span>
+    						</li>
+						</ul>
+					</div>
+				</div><!--person-information-->
+			</div><!--inner-content-->
+		</div>
+	</div>
+</section>
+
+<section id="services">
+	<div class="container">
+		<div class="row">
+			<div class="inner-content">
+				<div class="section-header align-center">
+					<h2 class="section-title">What I Offer</h2>
+					<p>Things that I can do for my clients. Just make your good trust I love to provide quality works.</p>
+				</div>
+				<div class="service-slider grid">
+					<div class="column">
+						<span class="iconify" data-icon="devicon:python"></span>
+						<h3>Scripts / Web scraping</h3>
+						<p>Extracting data from any website including protected ones (Cloudflare, CAPTCHA, JS rendering). Marketplace parsing, price monitoring, and routine task automation, cron jobs.</p>
+					</div>
+					<div class="column">
+						<span class="iconify" data-icon="devicon:fastapi"></span>
+						<h3>FastAPI / Web Apps</h3>
+						<p>Building high-performance web applications, REST APIs. Fullstack capabilities with AI-assisted frontend. Admin panels, dashboards, APIs with auto-generated Swagger docs.</p>
+					</div>								
+					<div class="column">
+						<span class="iconify" data-icon="devicon:android"></span>
+						<h3>Chatbots</h3>
+						<p>Building smart bots for any platform with bot API: Telegram, Discord, etc. From simple to complex multi-step workflows with payments, notifications, and DB integration.</p>
+					</div>	
+					<div class="column">
+						<span class="iconify" data-icon="devicon:docker"></span>
+						<h3>Deployment / VPS Setup</h3>
+						<p>Deploying and configuring services on VPS: Uvicorn/Gunicorn, PostgreSQL, Redis, Kafka, Docker & Docker-Compose for reproducible environments.</p>
+					</div>
+				</div><!--services-content-->
+			</div>
+		</div>
+	</div>		
+</section>
+
+<section id="portfolio">			
+    <div class="container">
+        <div class="row">
+            <div class="inner-content">
+
+                <div class="section-header align-center">
+                    <h2 class="section-title">Portfolio</h2>
+                </div>
+
+                <div class="tab-content">
+                    <div id="all" data-tab-content class="active">
+                        <div class="tab-element">
+
+                            <figure data-project-id="automation-1">
+                                <span style="cursor:pointer; display:block;">
+                                    <img src="images/tab1.jpg" class="tab-image" alt="Async Monitoring">
+								</span>
+                                <figcaption>
+                                    <div class="caption">
+                                        <h3>Async Monitoring & Alert System</h3>
+                                        <span class="category">Web Scraping · Email Notification</span>
+                                    </div>
+                                    <span class="btn-arrow light" style="cursor:pointer;">
+                                        <i class="icon icon-arrow-right"></i>
+									</span>
+                                </figcaption>
+                            </figure>
+
+                            <figure data-project-id="automation-2">
+                                <span style="cursor:pointer; display:block;">
+                                    <img src="images/tab2.jpg" class="tab-image" alt="Q&A Backend API">
+                                </span>
+                                <figcaption>
+                                    <div class="caption">
+                                        <h3>Q&A Backend API</h3>
+                                        <span class="category">Backend / FastAPI</span>
+                                    </div>
+                                    <span class="btn-arrow light">
+            							<i class="icon icon-arrow-right"></i>
+        							</span>
+                                </figcaption>
+                            </figure>
+
+                            <figure data-project-id="project-3">
+                                <span style="cursor:pointer; display:block;">
+                                    <img src="images/tab3.jpg" class="tab-image" alt="Project 3">
+								</span>
+                                <figcaption>
+                                    <div class="caption">
+                                        <h3>Personal Portfolio Website</h3>
+                                        <span class="category">Fullstack / DevOps</span>
+                                    </div>
+                                    <span class="btn-arrow light">
+            							<i class="icon icon-arrow-right"></i>
+        							</span>
+                                </figcaption>
+                            </figure>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-wrap align-center">
+                    <a href="#" class="btn-accent">View Portfolio</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contact">
+	<div class="container">
+		<div class="row">
+			<div class="inner-content">
+				<h2>Let’s work together</h2>
+				<p>I’m available for freelance work. Have any projects in your mind? Just feel free to contact me</p>
+				<div class="btn-wrap align-center">
+					<a href="#" class="btn-outline-orange btn-pill">Contact me</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+</main>
+
+<div id="footer-bottom">
+	<div class="container">
+		<div class="row">
+			<div class="inner-content">
+				<div class="grid">
+					<div class="copyright">
+						<p>© 2026 Pavel Grishin</p>
+					</div>
+					<div class="social-links">
+    					<ul>
+        					<li>
+            					<a href="https://github.com/pavelgrishin" target="_blank">
+                					<span class="iconify" data-icon="mdi:github"></span>
+            					</a>
+        					</li>
+        					<li>
+            					<a href="https://linkedin.com/in/pavelgrishin" target="_blank">
+                					<span class="iconify" data-icon="mdi:linkedin"></span>
+            					</a>
+        					</li>
+        					<li>
+            					<a href="https://t.me/pavelgrishin" target="_blank">
+                					<span class="iconify" data-icon="mdi:telegram"></span>
+								</a>
+        					</li>
+    					</ul>
+					</div>
+				</div>
+
+			</div><!--footer-bottom-content-->			
+		</div>
+	</div>
+</div>
+
+</div><!--entire-wrapper-->
+
+
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="https://code.iconify.design/2/2.0.3/iconify.min.js"></script>
+    <script src="js/plugins.js"></script>
+    <script src="js/script.js"></script>
+
+    <!-- Portfolio Modal Window -->
+    <div id="portfolioModal" class="portfolio-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-dialog">
+            <button class="modal-close">&times;</button>
+
+            <div class="modal-image">
+                <img src="" alt="" id="modalImg">
+            </div>
+
+            <div class="modal-body">
+                <span class="modal-category" id="modalCategory"></span>
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <div class="modal-description" id="modalDescription"></div>
+
+                <div class="modal-tech-stack" id="modalTech"></div>
+
+                <div class="modal-links">
+                    <a href="#" class="btn-accent" id="modalDemo" target="_blank">Live Demo</a>
+                    <a href="#" class="btn-outline-dark" id="modalGitHub" target="_blank">View Code</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<script>
+    document.querySelectorAll('.tab-element figure[data-project-id]').forEach(function(f) {
+        f.onclick = function() {
+            return false;  // блокируем любые переходы мгновенно
+        };
+    });
+	</script>
+
+</body>
+</html>
+</body>
+</html>
