@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from pydantic import PostgresDsn
+from pydantic import PostgresDsn, EmailStr
 
 from pydantic_settings import (
     BaseSettings,
@@ -14,6 +14,7 @@ class RunConfig(BaseModel):
 class ApiV1Prefix(BaseModel):
     prefix: str = "/v1"
     contacts: str = "/contacts"
+    admin: str = "/admin"
 
 
 class ApiPrefix(BaseModel):
@@ -37,6 +38,11 @@ class DatabaseConfig(BaseModel):
     }
 
 
+class EmailConfig(BaseModel):
+    login: str
+    password: str
+    sendto: EmailStr
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=(".env.template", ".env"),
@@ -46,6 +52,7 @@ class Settings(BaseSettings):
     )
     run: RunConfig = RunConfig()
     api: ApiPrefix = ApiPrefix()
+    email: EmailConfig
     db: DatabaseConfig
 
 

@@ -1,5 +1,8 @@
 __all__ = (
-    "ContactMessageCreate"
+    "ContactMessageCreate",
+    "ContactMessageRead",
+    "PaginatedResponse",
+    "ContactMessageUpdate",
 )
 
-from .contact import ContactMessageCreate
+from .contact import ContactMessageCreate, ContactMessageRead, PaginatedResponse, ContactMessageUpdate
