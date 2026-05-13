@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from pydantic import EmailStr
+from pydantic import EmailStr, Field
 from pydantic import ConfigDict
 
 from datetime import datetime
@@ -9,6 +9,10 @@ class ContactMessageCreate(BaseModel):
     name: str
     email: EmailStr
     description: str
+    h_captcha_token: str = Field(..., alias="h-captcha-response")
+
+    class Config:
+        populate_by_name = True
 
 class ContactMessageRead(BaseModel):
     """Read tasks from DB schema"""
