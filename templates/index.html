@@ -121,7 +121,7 @@
 			<h1>Hello, I’m <span class="colored">Pavel Grishin</span></h1>
 			<p>Professional Python Developer. I provide clean, maintainable and efficient code.</p>
 			<div class="btn-wrap">
-				<a href="#" class="btn-outline-orange btn-pill">Get in touch</a>
+				<a href="#" class="btn-outline-orange btn-pill open-contact-modal">Get in touch</a>
 			</div>
 			<div class="socila-links">
     		<ul>
@@ -164,10 +164,13 @@
 						<strong>⚙ Stack:</strong> Python, FastAPI, PostgreSQL, Docker, Playwright, Git.</p>
 						<div class="general-button">
 							<div class="btn-wrap">
-								<a href="#" class="btn-accent">Hire Me</a>
+								<a href="#" class="btn-accent open-contact-modal">Hire Me</a>
 							</div>
 							<div class="btn-wrap">
-								<a href="#" class="btn-outline-dark">Download CV</a>
+								<a
+										href="https://krasnodar.hh.ru/resume_converter/%D0%93%D1%80%D0%B8%D1%88%D0%B8%D0%BD%20%D0%9F%D0%B0%D0%B2%D0%B5%D0%BB%20%D0%AD%D0%B4%D1%83%D0%B0%D1%80%D0%B4%D0%BE%D0%B2%D0%B8%D1%87.pdf?hash=2aa1ff1eff102c81ee0039ed1f565347553978&type=pdf&hhtmFrom=resume_list&hhtmSource=resume"
+										class="btn-outline-dark"
+								>Download CV</a>
 							</div>
 						</div>
 					</div>
@@ -318,7 +321,7 @@
 				<h2>Let’s work together</h2>
 				<p>I’m available for freelance work. Have any projects in your mind? Just feel free to contact me</p>
 				<div class="btn-wrap align-center">
-					<a href="#" class="btn-outline-orange btn-pill">Contact me</a>
+					<a href="#" class="btn-outline-orange btn-pill open-contact-modal">Contact me</a>
 				</div>
 			</div>
 		</div>
@@ -363,7 +366,7 @@
 
 </div><!--entire-wrapper-->
 
-
+	<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
     <script src="../static/js/jquery-1.11.0.min.js"></script>
     <script src="https://code.iconify.design/2/2.0.3/iconify.min.js"></script>
     <script src="../static/js/plugins.js"></script>
@@ -402,8 +405,6 @@
     });
 	</script>
 
-</body>
-
 <div id="contactModal" class="modal">
     <div class="modal-content" style="max-width:500px;">
         <div class="modal-header">
@@ -427,167 +428,9 @@
     </div>
 </div>
 
-<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 
-<script>
-    // Открытие модального окна при клике на кнопку "Contact me"
-    const contactBtn = document.querySelector('#contact .btn-outline-orange');
-    const contactModal = document.getElementById('contactModal');
+</body>
 
-    if (contactBtn) {
-        contactBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            contactModal.classList.add('active');
-        });
-    }
-
-    function closeContactModal() {
-        contactModal.classList.remove('active');
-    }
-
-    // Обработка отправки формы
-    const contactForm = document.getElementById('contactForm');
-    if (contactForm) {
-        contactForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            // Получаем токен от hCaptcha
-            const captchaResponse = document.querySelector('[name="h-captcha-response"]')?.value;
-
-            if (!captchaResponse) {
-                alert('⚠️ Пожалуйста, подтвердите, что вы не робот');
-                return;
-            }
-
-            // Собираем данные
-            const formData = {
-                name: document.getElementById('contactName').value.trim(),
-                email: document.getElementById('contactEmail').value.trim(),
-                description: document.getElementById('contactMessage').value.trim(),
-                'h-captcha-response': captchaResponse
-            };
-
-            // Валидация
-            if (!formData.name || !formData.email || !formData.description) {
-                alert('⚠️ Пожалуйста, заполните все поля');
-                return;
-            }
-
-            // Блокируем кнопку
-            const submitBtn = contactForm.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Отправка...';
-
-            try {
-                const response = await fetch('/api/v1/contacts', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                });
-
-                if (response.ok) {
-                    alert('✅ Сообщение успешно отправлено! Я свяжусь с вами в ближайшее время.');
-                    contactForm.reset();
-                    closeContactModal();
-                    // Сбрасываем капчу
-                    if (typeof hcaptcha !== 'undefined') {
-                        hcaptcha.reset();
-                    }
-                } else {
-                    const error = await response.json();
-                    alert('❌ Ошибка: ' + (error.detail || 'Попробуйте позже'));
-                    // Сбрасываем капчу при ошибке
-                    if (typeof hcaptcha !== 'undefined') {
-                        hcaptcha.reset();
-                    }
-                }
-            } catch (error) {
-                console.error('Ошибка:', error);
-                alert('❌ Ошибка соединения с сервером. Проверьте подключение.');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalText;
-            }
-        });
-    }
-
-    // Закрытие модалки по клику вне окна
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                modal.classList.remove('active');
-                if (typeof hcaptcha !== 'undefined') {
-                    hcaptcha.reset();
-                }
-            }
-        });
-    });
-
-    // Закрытие по Escape
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            const modal = document.getElementById('contactModal');
-            if (modal) modal.classList.remove('active');
-        }
-    });
-</script>
-
-<style>
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.85);
-        z-index: 10000;
-        align-items: center;
-        justify-content: center;
-    }
-    .modal.active {
-        display: flex;
-    }
-    .modal-content {
-        background: white;
-        border-radius: 12px;
-        max-width: 500px;
-        width: 90%;
-        max-height: 90vh;
-        overflow-y: auto;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    }
-    .modal-header {
-        background: #fba820;
-        padding: 15px 20px;
-        color: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-radius: 12px 12px 0 0;
-    }
-    .modal-header h3 {
-        margin: 0;
-        color: white;
-    }
-    .modal-header .close-modal {
-        cursor: pointer;
-        font-size: 28px;
-        line-height: 1;
-    }
-    .modal-body {
-        padding: 25px;
-    }
-    .modal-body input, .modal-body textarea {
-        font-family: inherit;
-    }
-    .h-captcha {
-        margin: 15px 0;
-        display: flex;
-        justify-content: center;
-    }
-</style>
 
 </html>
 </body>

@@ -560,3 +560,123 @@ function closePortfolioModal() {
         });
     });
 })();
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const contactModal = document.getElementById('contactModal');
+    const contactForm = document.getElementById('contactForm');
+
+    // Кнопки открытия модалки
+    const contactBtns = document.querySelectorAll('.open-contact-modal');
+
+    contactBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            contactModal.classList.add('active');
+        });
+    });
+
+    // Закрытие по крестику
+    const closeBtn = document.querySelector('.close-modal');
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function () {
+            contactModal.classList.remove('active');
+        });
+    }
+
+    // Закрытие по клику вне окна
+    contactModal.addEventListener('click', function(e) {
+        if (e.target === contactModal) {
+            contactModal.classList.remove('active');
+
+            if (typeof hcaptcha !== 'undefined') {
+                hcaptcha.reset();
+            }
+        }
+    });
+
+    // Закрытие по Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            contactModal.classList.remove('active');
+        }
+    });
+
+    // Отправка формы
+    if (contactForm) {
+
+        contactForm.addEventListener('submit', async function(e) {
+
+            e.preventDefault();
+
+            const captchaResponse =
+                document.querySelector('[name="h-captcha-response"]')?.value;
+
+            if (!captchaResponse) {
+                alert('⚠️ Подтвердите что вы не робот');
+                return;
+            }
+
+            const formData = {
+                name: document.getElementById('contactName').value.trim(),
+                email: document.getElementById('contactEmail').value.trim(),
+                description: document.getElementById('contactMessage').value.trim(),
+                'h-captcha-response': captchaResponse
+            };
+
+            const submitBtn =
+                contactForm.querySelector('button[type="submit"]');
+
+            const originalText = submitBtn.textContent;
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Отправка...';
+
+            try {
+
+                const response = await fetch('/api/v1/contacts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+
+                    alert('✅ Сообщение отправлено');
+
+                    contactForm.reset();
+
+                    contactModal.classList.remove('active');
+
+                    if (typeof hcaptcha !== 'undefined') {
+                        hcaptcha.reset();
+                    }
+
+                } else {
+
+                    const error = await response.json();
+
+                    alert(error.detail || 'Ошибка');
+
+                    if (typeof hcaptcha !== 'undefined') {
+                        hcaptcha.reset();
+                    }
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert('Ошибка соединения');
+
+            } finally {
+
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+    }
+});
