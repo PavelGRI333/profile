@@ -1,19 +1,38 @@
-import smtplib
 from email.message import EmailMessage
+from datetime import datetime
+import aiosmtplib
 
 from profile_app.core.config import settings
 
-def send_email_message(subject: str, body: str) -> None:
+
+async def send_email_notification_async(name: str, email: str, description: str) -> None:
+    """Асинхронная отправка email через aiosmtplib"""
     msg = EmailMessage()
-    msg['Subject'] = subject
+    msg['Subject'] = f"🔔 Новая заявка от {name}"
     msg['From'] = settings.email.login
     msg['To'] = settings.email.sendto
+
+    # Формируем тело письма
+    current_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+    body = f"""
+    Новая заявка с сайта
+
+    👤 Имя: {name}
+    📧 Email: {email}
+    📝 Сообщение: {description}
+    🕐 Время: {current_time}
+
+    ---
+    Ответьте клиенту на его email: {email}
+    """
     msg.set_content(body)
 
-    # logger.info("Начинаю отправку email уведомления")
-
-    with smtplib.SMTP_SSL("smtp.mail.ru", 465) as smtp:
-        smtp.login(settings.email.login, settings.email.password)
-        smtp.send_message(msg)
-
-    # logger.info("Email уведомление успешно отправлено")
+    # Асинхронная отправка
+    await aiosmtplib.send(
+        msg,
+        hostname="smtp.mail.ru",
+        port=465,
+        username=settings.email.login,
+        password=settings.email.password,
+        use_tls=True,
+    )
