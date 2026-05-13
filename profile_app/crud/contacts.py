@@ -11,8 +11,10 @@ from profile_app.core.schemas import ContactMessageCreate
 async def create_contact_message(
         session: AsyncSession,
         message_create: ContactMessageCreate,
-) -> dict[str, str]:
-    message = ContactMessage(**message_create.model_dump())
+) -> dict:
+    """ CRUD operation create contact message """
+    create_data = message_create.model_dump(exclude={'h_captcha_token'})
+    message = ContactMessage(**create_data)
     session.add(message)
     await session.commit()
     await session.refresh(message)
@@ -28,10 +30,7 @@ async def read_all_contact_messages(
         size: int = 10,
 ) -> tuple[Sequence[ContactMessage], int, int]:
     """
-    Получить все заявки с пагинацией.
-
-    Returns:
-        (список_заявок, общее_количество, всего_страниц)
+        Read tasks from DB paginated
     """
     # 1. Считаем общее количество записей
     total = await session.scalar(select(func.count()).select_from(ContactMessage))
@@ -57,7 +56,7 @@ async def delete_contact_message(
     session: AsyncSession,
     message_id: int,
 ) -> bool:
-    """Удалить заявку из БД. Возвращает True, если заявка была удалена."""
+    """Delete task by ID"""
     message = await session.get(ContactMessage, message_id)
     if not message:
         return False
@@ -72,15 +71,7 @@ async def update_contact_message_status(
         is_read: bool,
 ) -> ContactMessage | None:
     """
-    Обновить статус прочтения заявки.
-
-    Args:
-        session: Сессия БД
-        message_id: ID заявки
-        is_read: Новый статус (True/False)
-
-    Returns:
-        Обновлённая заявка или None, если не найдена
+        Update status is_read
     """
     message = await session.get(ContactMessage, message_id)
     if not message:

@@ -38,6 +38,10 @@ class DatabaseConfig(BaseModel):
     }
 
 
+class SecurityConfig(BaseModel):
+    key: str
+
+
 class EmailConfig(BaseModel):
     login: str
     password: str
@@ -54,6 +58,7 @@ class Settings(BaseSettings):
     api: ApiPrefix = ApiPrefix()
     email: EmailConfig
     db: DatabaseConfig
+    security: SecurityConfig
 
 
 settings = Settings()

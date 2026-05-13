@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel - Заявки</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="/static/css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="/static/icomoon/icomoon.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/vendor.css">
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+
+    <style>
+        /* Дополнительные стили для админки */
+        .admin-container {
+            max-width: 1400px;
+            margin: 100px auto 50px;
+            padding: 0 20px;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #fba820;
+        }
+        .admin-title {
+            font-size: 2em;
+            color: #252525;
+        }
+        .back-to-site {
+            background: #3f3f3f;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+        }
+        .back-to-site:hover {
+            background: #fba820;
+        }
+        .messages-table {
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .messages-table th {
+            background: #3f3f3f;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        .messages-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            color: #555;
+        }
+        .messages-table tr:hover {
+            background: #f9f9f9;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+        }
+        .status-read {
+            background: #4caf50;
+            color: white;
+        }
+        .status-unread {
+            background: #ff9800;
+            color: white;
+        }
+        .action-btn {
+            padding: 5px 10px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+        .btn-view {
+            background: #2196f3;
+            color: white;
+        }
+        .btn-read {
+            background: #4caf50;
+            color: white;
+        }
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .pagination a, .pagination span {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .pagination .active {
+            background: #fba820;
+            color: white;
+        }
+        .modal-backdrop-admin {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-backdrop-admin.active {
+            display: flex;
+        }
+        .modal-content-admin {
+            background: white;
+            max-width: 600px;
+            width: 90%;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .modal-header-admin {
+            background: #fba820;
+            padding: 15px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-body-admin {
+            padding: 20px;
+        }
+        .close-modal {
+            cursor: pointer;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="entire-wrapper">
+    <header id="header">
+        <div class="header-wrap">
+            <div class="main-logo">
+                <a href="/">
+                    <img src="/static/images/main-logo.png" alt="logo">
+                </a>
+            </div>
+            <nav id="navbar">
+                <div class="top-menu">
+                    <ul class="menu-list">
+                        <li><a href="/">На сайт</a></li>
+                        <li><a href="/api/v1/admin" class="active">Заявки</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1 class="admin-title">📬 Управление заявками</h1>
+            <a href="/" class="back-to-site">← Вернуться на сайт</a>
+        </div>
+
+        <div id="messagesContainer">
+            <!-- Таблица заявок загрузится через JS -->
+            <div style="text-align: center; padding: 50px;">Загрузка...</div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно просмотра заявки -->
+<div id="messageModal" class="modal-backdrop-admin">
+    <div class="modal-content-admin">
+        <div class="modal-header-admin">
+            <h3>Просмотр заявки</h3>
+            <span class="close-modal" onclick="closeMessageModal()">&times;</span>
+        </div>
+        <div class="modal-body-admin" id="modalMessageBody">
+            <!-- Контент заявки -->
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentPage = 1;
+    const pageSize = 10;
+
+    async function loadMessages() {
+        try {
+            const response = await fetch(`/api/v1/admin?page=${currentPage}&size=${pageSize}`);
+            const data = await response.json();
+
+            renderMessages(data);
+        } catch (error) {
+            console.error('Ошибка загрузки:', error);
+            document.getElementById('messagesContainer').innerHTML = '<div style="text-align:center;padding:50px;color:red;">Ошибка загрузки заявок</div>';
+        }
+    }
+
+    function renderMessages(data) {
+        const { items, total, page, pages } = data;
+
+        if (!items || items.length === 0) {
+            document.getElementById('messagesContainer').innerHTML = '<div style="text-align:center;padding:50px;">Нет заявок</div>';
+            return;
+        }
+
+        let html = `
+            <table class="messages-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Имя</th>
+                        <th>Email</th>
+                        <th>Сообщение</th>
+                        <th>Статус</th>
+                        <th>Дата</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        items.forEach(msg => {
+            const statusClass = msg.is_read ? 'status-read' : 'status-unread';
+            const statusText = msg.is_read ? '✓ Прочитано' : '○ Не прочитано';
+            const date = new Date(msg.created_at).toLocaleString('ru-RU');
+
+            html += `
+                <tr>
+                    <td>${msg.id}</td>
+                    <td>${escapeHtml(msg.name)}</td>
+                    <td><a href="mailto:${msg.email}">${msg.email}</a></td>
+                    <td style="max-width:300px; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(msg.description.substring(0, 100))}${msg.description.length > 100 ? '...' : ''}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>${date}</td>
+                    <td>
+                        <button class="action-btn btn-view" onclick="viewMessage(${msg.id})">👁️ Просмотр</button>
+                        <button class="action-btn btn-read" onclick="toggleRead(${msg.id}, ${!msg.is_read})">${msg.is_read ? '📩 Отметить непрочитанным' : '✓ Отметить прочитанным'}</button>
+                        <button class="action-btn btn-delete" onclick="deleteMessage(${msg.id})">🗑️ Удалить</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        html += `
+                </tbody>
+            </table>
+        `;
+
+        // Пагинация
+        if (pages > 1) {
+            html += '<div class="pagination">';
+            for (let i = 1; i <= pages; i++) {
+                if (i === page) {
+                    html += `<span class="active">${i}</span>`;
+                } else {
+                    html += `<a href="#" onclick="goToPage(${i}); return false;">${i}</a>`;
+                }
+            }
+            html += '</div>';
+        }
+
+        document.getElementById('messagesContainer').innerHTML = html;
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function goToPage(page) {
+        currentPage = page;
+        loadMessages();
+    }
+
+    async function viewMessage(id) {
+        try {
+            const response = await fetch(`/api/v1/admin/${id}`);
+            const msg = await response.json();
+
+            const modalBody = document.getElementById('modalMessageBody');
+            modalBody.innerHTML = `
+                <p><strong>ID:</strong> ${msg.id}</p>
+                <p><strong>Имя:</strong> ${escapeHtml(msg.name)}</p>
+                <p><strong>Email:</strong> <a href="mailto:${msg.email}">${msg.email}</a></p>
+                <p><strong>Статус:</strong> ${msg.is_read ? 'Прочитано' : 'Не прочитано'}</p>
+                <p><strong>Дата:</strong> ${new Date(msg.created_at).toLocaleString('ru-RU')}</p>
+                <p><strong>Сообщение:</strong></p>
+                <div style="background: #f5f5f5; padding: 15px; border-radius: 8px;">${escapeHtml(msg.description)}</div>
+            `;
+
+            document.getElementById('messageModal').classList.add('active');
+        } catch (error) {
+            alert('Ошибка при загрузке заявки');
+        }
+    }
+
+    function closeMessageModal() {
+        document.getElementById('messageModal').classList.remove('active');
+    }
+
+    async function toggleRead(id, isRead) {
+        try {
+            const response = await fetch(`/api/v1/admin/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ is_read: isRead })
+            });
+
+            if (response.ok) {
+                loadMessages(); // Обновить список
+            } else {
+                alert('Ошибка при обновлении статуса');
+            }
+        } catch (error) {
+            alert('Ошибка при обновлении статуса');
+        }
+    }
+
+    async function deleteMessage(id) {
+        if (!confirm('Вы уверены, что хотите удалить эту заявку?')) return;
+
+        try {
+            const response = await fetch(`/api/v1/admin/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                loadMessages(); // Обновить список
+            } else {
+                alert('Ошибка при удалении');
+            }
+        } catch (error) {
+            alert('Ошибка при удалении');
+        }
+    }
+
+    // Загрузить заявки при загрузке страницы
+    loadMessages();
+</script>
+
+<script src="/static/js/jquery-1.11.0.min.js"></script>
+<script src="https://code.iconify.design/2/2.0.3/iconify.min.js"></script>
+
+</body>
+</html>

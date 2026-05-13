@@ -8,7 +8,7 @@ from sqlalchemy import Text, String
 from .mixins.int_id_pk import IntIdPkMixin
 from .mixins.created_at import CreatedAtMixin
 
-
+#SQLA model for contactmessage
 class ContactMessage(IntIdPkMixin, CreatedAtMixin, Base):
     name: Mapped[str] = mapped_column()
     email: Mapped[str] = mapped_column(String(255))

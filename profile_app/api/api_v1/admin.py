@@ -16,7 +16,9 @@ from profile_app.core.schemas import (
     ContactMessageUpdate
 )
 
-from profile_app.core.models import db_helper, ContactMessage
+from profile_app.core.models import ContactMessage
+
+from profile_app.core.models import db_helper
 
 from profile_app.crud import contacts as crud_contacts
 
@@ -33,7 +35,9 @@ async def get_contacts_messages(
         ],
         page: int = Query(1, ge=1, description="Номер страницы"),
         size: int = Query(10, ge=1, le=100, description="Записей на странице"),
-):
+) -> dict:
+    """ Get all contacts messages paginated"""
+
     messages, total, total_pages = await crud_contacts.read_all_contact_messages(
         session=session,
         page=page,
@@ -48,12 +52,13 @@ async def get_contacts_messages(
         "pages": total_pages,
     }
 
+#
 @router.delete("/{message_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_contact_message(
     message_id: int,
     session: AsyncSession = Depends(db_helper.session_getter),
-):
-    """Удалить заявку по ID."""
+) -> None:
+    """Delete task by id"""
     deleted = await crud_contacts.delete_contact_message(session, message_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Заявка не найдена")
@@ -68,12 +73,9 @@ async def update_contact_message_status(
         message_id: int,
         data: ContactMessageUpdate,
         session: Annotated[AsyncSession, Depends(db_helper.session_getter)],
-):
+) -> ContactMessage:
     """
-    Обновить статус прочтения заявки.
-
-    - **message_id**: ID заявки
-    - **is_read**: true (прочитано) или false (не прочитано)
+        Update status is_read in task by id
     """
     message = await crud_contacts.update_contact_message_status(
         session=session,

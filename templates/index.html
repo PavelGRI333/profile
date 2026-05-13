@@ -12,14 +12,14 @@
     <meta name="keywords" content="">
     <meta name="description" content="">
 
-    <link rel="stylesheet" type="text/css" href="css/normalize.css">
-	<link rel="stylesheet" type="text/css" href="icomoon/icomoon.css">
-    <link rel="stylesheet" type="text/css" href="css/vendor.css">
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/normalize.css">
+	<link rel="stylesheet" type="text/css" href="../static/icomoon/icomoon.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/vendor.css">
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
 
 	<!-- script
 	================================================== -->
-	<script src="js/modernizr.js"></script>
+	<script src="../static/js/modernizr.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -73,7 +73,7 @@
 	<div class="header-wrap">
 		<div class="main-logo">
 			<a href="#">
-				<img src="images/main-logo.png" alt="logo">
+				<img src="../static/images/main-logo.png" alt="logo">
 			</a>
 		</div><!--main-logo-->
 
@@ -114,7 +114,7 @@
 </header>
 
 <div id="billboard">
-	<img src="images/main-banner.jpg" alt="post" class="banner-image">
+	<img src="../static/images/main-banner.jpg" alt="post" class="banner-image">
 	<div class="banner-content">
 
 		<div class="banner-header">
@@ -255,7 +255,7 @@
 
                             <figure data-project-id="automation-1">
                                 <span style="cursor:pointer; display:block;">
-                                    <img src="images/tab1.jpg" class="tab-image" alt="Async Monitoring">
+                                    <img src="../static/images/tab1.jpg" class="tab-image" alt="Async Monitoring">
 								</span>
                                 <figcaption>
                                     <div class="caption">
@@ -270,7 +270,7 @@
 
                             <figure data-project-id="automation-2">
                                 <span style="cursor:pointer; display:block;">
-                                    <img src="images/tab2.jpg" class="tab-image" alt="Q&A Backend API">
+                                    <img src="../static/images/tab2.jpg" class="tab-image" alt="Q&A Backend API">
                                 </span>
                                 <figcaption>
                                     <div class="caption">
@@ -285,7 +285,7 @@
 
                             <figure data-project-id="project-3">
                                 <span style="cursor:pointer; display:block;">
-                                    <img src="images/tab3.jpg" class="tab-image" alt="Project 3">
+                                    <img src="../static/images/tab3.jpg" class="tab-image" alt="Project 3">
 								</span>
                                 <figcaption>
                                     <div class="caption">
@@ -364,10 +364,10 @@
 </div><!--entire-wrapper-->
 
 
-    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="../static/js/jquery-1.11.0.min.js"></script>
     <script src="https://code.iconify.design/2/2.0.3/iconify.min.js"></script>
-    <script src="js/plugins.js"></script>
-    <script src="js/script.js"></script>
+    <script src="../static/js/plugins.js"></script>
+    <script src="../static/js/script.js"></script>
 
     <!-- Portfolio Modal Window -->
     <div id="portfolioModal" class="portfolio-modal">
@@ -403,6 +403,192 @@
 	</script>
 
 </body>
+
+<div id="contactModal" class="modal">
+    <div class="modal-content" style="max-width:500px;">
+        <div class="modal-header">
+            <h3>📧 Связаться со мной</h3>
+            <span class="close-modal" onclick="closeContactModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="contactForm">
+                <input type="text" id="contactName" placeholder="Ваше имя" required style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:5px;">
+                <input type="email" id="contactEmail" placeholder="Ваш Email" required style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:5px;">
+                <textarea id="contactMessage" placeholder="Ваше сообщение" required rows="5" style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:5px;"></textarea>
+
+                <!-- hCaptcha виджет -->
+                <div class="h-captcha" data-sitekey="10000000-ffff-ffff-ffff-000000000001"></div>
+
+                <button type="submit" style="background:#fba820; color:white; padding:12px 30px; border:none; border-radius:30px; cursor:pointer; width:100%; margin-top:15px;">
+                    📩 Отправить сообщение
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+
+<script>
+    // Открытие модального окна при клике на кнопку "Contact me"
+    const contactBtn = document.querySelector('#contact .btn-outline-orange');
+    const contactModal = document.getElementById('contactModal');
+
+    if (contactBtn) {
+        contactBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            contactModal.classList.add('active');
+        });
+    }
+
+    function closeContactModal() {
+        contactModal.classList.remove('active');
+    }
+
+    // Обработка отправки формы
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Получаем токен от hCaptcha
+            const captchaResponse = document.querySelector('[name="h-captcha-response"]')?.value;
+
+            if (!captchaResponse) {
+                alert('⚠️ Пожалуйста, подтвердите, что вы не робот');
+                return;
+            }
+
+            // Собираем данные
+            const formData = {
+                name: document.getElementById('contactName').value.trim(),
+                email: document.getElementById('contactEmail').value.trim(),
+                description: document.getElementById('contactMessage').value.trim(),
+                'h-captcha-response': captchaResponse
+            };
+
+            // Валидация
+            if (!formData.name || !formData.email || !formData.description) {
+                alert('⚠️ Пожалуйста, заполните все поля');
+                return;
+            }
+
+            // Блокируем кнопку
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Отправка...';
+
+            try {
+                const response = await fetch('/api/v1/contacts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert('✅ Сообщение успешно отправлено! Я свяжусь с вами в ближайшее время.');
+                    contactForm.reset();
+                    closeContactModal();
+                    // Сбрасываем капчу
+                    if (typeof hcaptcha !== 'undefined') {
+                        hcaptcha.reset();
+                    }
+                } else {
+                    const error = await response.json();
+                    alert('❌ Ошибка: ' + (error.detail || 'Попробуйте позже'));
+                    // Сбрасываем капчу при ошибке
+                    if (typeof hcaptcha !== 'undefined') {
+                        hcaptcha.reset();
+                    }
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('❌ Ошибка соединения с сервером. Проверьте подключение.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+    }
+
+    // Закрытие модалки по клику вне окна
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                if (typeof hcaptcha !== 'undefined') {
+                    hcaptcha.reset();
+                }
+            }
+        });
+    });
+
+    // Закрытие по Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('contactModal');
+            if (modal) modal.classList.remove('active');
+        }
+    });
+</script>
+
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+    }
+    .modal.active {
+        display: flex;
+    }
+    .modal-content {
+        background: white;
+        border-radius: 12px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    .modal-header {
+        background: #fba820;
+        padding: 15px 20px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 12px 12px 0 0;
+    }
+    .modal-header h3 {
+        margin: 0;
+        color: white;
+    }
+    .modal-header .close-modal {
+        cursor: pointer;
+        font-size: 28px;
+        line-height: 1;
+    }
+    .modal-body {
+        padding: 25px;
+    }
+    .modal-body input, .modal-body textarea {
+        font-family: inherit;
+    }
+    .h-captcha {
+        margin: 15px 0;
+        display: flex;
+        justify-content: center;
+    }
+</style>
+
 </html>
 </body>
 </html>
