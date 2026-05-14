@@ -1,5 +1,7 @@
 from typing import Annotated
 
+from pathlib import Path
+
 from fastapi import (
     APIRouter,
     Depends,
@@ -7,6 +9,8 @@ from fastapi import (
     status,
     Query,
 )
+
+from fastapi.responses import HTMLResponse
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -22,9 +26,19 @@ from profile_app.core.models import db_helper
 
 from profile_app.crud import contacts as crud_contacts
 
+from profile_app.utils import verify_admin
+
+BASE_DIR = Path(__file__).parent.parent.parent.parent
 
 router = APIRouter(
     tags=["admin"],
+    dependencies=[Depends(verify_admin)],
+)
+
+page_router = APIRouter(
+    prefix="/admin",
+    tags=["admin-pages"],
+    dependencies=[Depends(verify_admin)],
 )
 
 @router.get('', response_model=PaginatedResponse)
@@ -90,3 +104,14 @@ async def update_contact_message_status(
         )
 
     return message
+
+@page_router.get("", response_class=HTMLResponse)
+async def serve_admin():
+    """Страница админки"""
+    admin_path = BASE_DIR / "templates" / "admin" / "index.html"
+    if admin_path.exists():
+        with open(admin_path, 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        return HTMLResponse(content=html_content)
+    return HTMLResponse(content="admin/index.html not found", status_code=404)
+

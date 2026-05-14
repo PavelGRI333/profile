@@ -11,6 +11,8 @@ from core.config import settings
 
 from api import router as api_router
 
+from api.api_v1.admin import page_router as admin_page_router
+
 from core.models import db_helper
 
 BASE_DIR = Path(__file__).parent.parent
@@ -53,6 +55,8 @@ main_app.include_router(
     prefix=settings.api.prefix,
 )
 
+main_app.include_router(admin_page_router)
+
 @main_app.get("/", response_class=HTMLResponse)
 async def serve_index():
     """Главная страница"""
@@ -63,17 +67,6 @@ async def serve_index():
             html_content = f.read()
         return HTMLResponse(content=html_content)
     return HTMLResponse(content="index.html not found", status_code=404)
-
-
-@main_app.get("/admin", response_class=HTMLResponse)
-async def serve_admin():
-    """Страница админки"""
-    admin_path = BASE_DIR / "templates" / "admin" / "index.html"
-    if admin_path.exists():
-        with open(admin_path, 'r', encoding='utf-8') as f:
-            html_content = f.read()
-        return HTMLResponse(content=html_content)
-    return HTMLResponse(content="admin/index.html not found", status_code=404)
 
 if __name__ == "__main__":
     uvicorn.run(

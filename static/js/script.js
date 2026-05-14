@@ -348,6 +348,50 @@ tabs.forEach(tab => {
         $('#services .service-slider .column').eq(3).find('h3').html(t.service_4_title);
         $('#services .service-slider .column').eq(3).find('p').html(t.service_4_text);
 
+        const $originalColumns = $('#services .service-slider .column:not(.slick-cloned)');
+
+        $originalColumns.eq(0).find('h3').html(t.service_1_title);
+        $originalColumns.eq(0).find('p').html(t.service_1_text);
+
+        $originalColumns.eq(1).find('h3').html(t.service_2_title);
+        $originalColumns.eq(1).find('p').html(t.service_2_text);
+
+        $originalColumns.eq(2).find('h3').html(t.service_3_title);
+        $originalColumns.eq(2).find('p').html(t.service_3_text);
+
+        $originalColumns.eq(3).find('h3').html(t.service_4_title);
+        $originalColumns.eq(3).find('p').html(t.service_4_text);
+
+        // 2. Уничтожаем слайдер, если он инициализирован
+        if ($('.service-slider').hasClass('slick-initialized')) {
+            $('.service-slider').slick('unslick');
+        }
+
+        // 3. Заново инициализируем слайдер
+        $('.service-slider').slick({
+            slidesToShow: 3,
+            slidesToScroll: 1,
+            autoplaySpeed: 2000,
+            dots: true,
+            responsive: [
+                {
+                    breakpoint: 1500,
+                    settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 2,
+                    }
+                },
+                {
+                    breakpoint: 800,
+                    settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1,
+                        arrows: false,
+                    }
+                }
+            ]
+        });
+
 
         $('.general-button .btn-accent').html(t.hire_btn);
         $('.general-button .btn-outline-dark').html(t.download_btn);
@@ -441,19 +485,19 @@ tabs.forEach(tab => {
 
 const portfolioProjects = {
     'automation-1': {
-        image: "images/tab1.jpg",
+        image: "/static/images/tab1.jpg",
         demo_url: "#",
         github_url: "#",
         tech_stack: ["Python 3.12", "Playwright", "BeautifulSoup4", "Automation", "Email Alerts", "VPS"]
     },
     'automation-2': {
-        image: "images/tab2.jpg",
+        image: "/static/images/tab2.jpg",
         demo_url: "#",
         github_url: "https://github.com/PavelGRI333/quizapi",
         tech_stack: ["Python 3.12", "FastAPI", "PostgreSQL", "SQLAlchemy", "Docker", "Pydantic"]
     },
     'project-3': {
-        image: "images/tab3.jpg",
+        image: "/static/images/tab3.jpg",
         demo_url: "#",
         github_url: "#",
         tech_stack: ["Python", "FastAPI", "PostgreSQL", "Docker", "JavaScript"]
@@ -560,6 +604,8 @@ function closePortfolioModal() {
         });
     });
 })();
+
+//модалка для contact формы
 
 document.addEventListener('DOMContentLoaded', function () {
 

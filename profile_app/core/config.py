@@ -40,6 +40,8 @@ class DatabaseConfig(BaseModel):
 
 class SecurityConfig(BaseModel):
     key: str
+    admin_login: str
+    admin_password: str
 
 
 class EmailConfig(BaseModel):
