@@ -7,13 +7,13 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 
-from core.config import settings
+from profile_app.core.config import settings
 
-from api import router as api_router
+from profile_app.api import router as api_router
 
-from api.api_v1.admin import page_router as admin_page_router
+from profile_app.api.api_v1.admin import page_router as admin_page_router
 
-from core.models import db_helper
+from profile_app.core.models import db_helper
 
 BASE_DIR = Path(__file__).parent.parent
 
@@ -32,11 +32,14 @@ main_app = FastAPI(
 main_app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "http://localhost",
+        "http://localhost:80",
         "http://localhost:8000",
+        "http://127.0.0.1",
+        "http://127.0.0.1:80",
         "http://127.0.0.1:8000",
-        "http://localhost:5500",
-        "http://127.0.0.1:5500",
-        "*",  # для разработки
+        "http://pgdev.developer.li",
+        "https://pgdev.developer.li",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -44,8 +47,6 @@ main_app.add_middleware(
 )
 
 static_path = BASE_DIR / "static"
-print(f"Static path: {static_path}")
-print(f"Static exists: {static_path.exists()}")
 
 if static_path.exists():
     main_app.mount("/static", StaticFiles(directory=str(static_path)), name="static")

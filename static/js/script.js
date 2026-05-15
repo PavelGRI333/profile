@@ -196,6 +196,19 @@ tabs.forEach(tab => {
             contact_btn: "Связаться",
 
             copyright: "© 2026 Павел Гришин",
+
+            // Contact Modal
+            contact_modal_title: "📧 Связаться со мной",
+            contact_name_placeholder: "Ваше имя",
+            contact_email_placeholder: "Ваш Email",
+            contact_message_placeholder: "Ваше сообщение",
+            contact_submit_btn: "📩 Отправить сообщение",
+
+            captcha_error: "⚠️ Подтвердите что вы не робот",
+            sending_text: "⏳ Отправка...",
+            success_message: "✅ Сообщение отправлено",
+            connection_error: "Ошибка соединения",
+            default_error: "Ошибка",
         },
         en: {
             nav_home: "Home",
@@ -303,6 +316,20 @@ tabs.forEach(tab => {
             contact_btn: "Contact me",
 
             copyright: "© 2026 Pavel Grishin",
+
+            // Contact Modal
+
+            contact_modal_title: "📧 Contact Me",
+            contact_name_placeholder: "Your Name",
+            contact_email_placeholder: "Your Email",
+            contact_message_placeholder: "Your Message",
+            contact_submit_btn: "📩 Send Message",
+
+            captcha_error: "⚠️ Please verify that you are not a robot",
+            sending_text: "⏳ Sending...",
+            success_message: "✅ Message sent successfully",
+            connection_error: "Connection error",
+            default_error: "Error",
         }
     };
 
@@ -439,6 +466,21 @@ tabs.forEach(tab => {
         $('#contact h2').html(t.contact_title);
         $('#contact p').html(t.contact_text);
         $('#contact .btn-outline-orange').html(t.contact_btn);
+
+        // Contact Modal
+        $('#contactModal h3').html(t.contact_modal_title);
+
+        $('#contactName')
+            .attr('placeholder', t.contact_name_placeholder);
+
+        $('#contactEmail')
+            .attr('placeholder', t.contact_email_placeholder);
+
+        $('#contactMessage')
+            .attr('placeholder', t.contact_message_placeholder);
+
+        $('#contactForm button[type="submit"]')
+            .html(t.contact_submit_btn);
 
         // Обновляем активный язык в меню
         $('.lang-menu div').removeClass('active-lang');
@@ -656,11 +698,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
             e.preventDefault();
 
+            const ft = window.formTranslations || {
+                captcha: '⚠️ Подтвердите что вы не робот',
+                success: '✅ Сообщение отправлено',
+                error: 'Ошибка соединения',
+                sending: '⏳ Отправка...',
+                submit: 'Отправить'
+            };
+
             const captchaResponse =
                 document.querySelector('[name="h-captcha-response"]')?.value;
 
             if (!captchaResponse) {
-                alert('⚠️ Подтвердите что вы не робот');
+                alert(ft.captcha);
                 return;
             }
 
@@ -674,10 +724,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const submitBtn =
                 contactForm.querySelector('button[type="submit"]');
 
-            const originalText = submitBtn.textContent;
-
             submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Отправка...';
+            submitBtn.textContent = ft.sending;
 
             try {
 
@@ -691,7 +739,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (response.ok) {
 
-                    alert('✅ Сообщение отправлено');
+                    alert(ft.success);
 
                     contactForm.reset();
 
@@ -705,7 +753,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     const error = await response.json();
 
-                    alert(error.detail || 'Ошибка');
+                    alert(error.detail || ft.error);
 
                     if (typeof hcaptcha !== 'undefined') {
                         hcaptcha.reset();
@@ -716,12 +764,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 console.error(error);
 
-                alert('Ошибка соединения');
+                alert(ft.error);
 
             } finally {
 
                 submitBtn.disabled = false;
-                submitBtn.textContent = originalText;
+                submitBtn.textContent = ft.submit;
             }
         });
     }
