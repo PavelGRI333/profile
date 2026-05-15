@@ -8,7 +8,7 @@ services:
     container_name: profile_nginx
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "127.0.0.1:8080:80"
     volumes:
       - ./static:/usr/share/nginx/html/static
       - ./templates:/usr/share/nginx/html/templates
