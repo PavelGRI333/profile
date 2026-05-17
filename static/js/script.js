@@ -12,7 +12,6 @@
   // ------------------------------------------------------------------------------ //
 
  $(document).ready(function(){
-
 	$('.service-slider').slick({
       slidesToShow: 3,
       slidesToScroll: 1,
@@ -35,6 +34,7 @@
           }
         }
       ]
+
     });
 
 
@@ -45,22 +45,29 @@
           prevArrow: $('.prev'),
           nextArrow: $('.next'),
 	});
+});
 
+//
+$('.menu-icon').on('click touchstart', 'a', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    var $this = $(this);
+    
+    // Защита от двойного срабатывания в Safari
+    if ($this.data('locked')) return;
+    $this.data('locked', true);
+    setTimeout(function() { $this.data('locked', false); }, 300);
+    
+    var x = document.getElementById("navigation");
+    if (x.className.indexOf("menu-bar") === -1) {
+        x.className = "top-menu menu-bar";
+    } else {
+        x.className = "top-menu";
+    }
 });
 
 
-
-// close when click off of container
-$(document).on('click touchstart', function (e){
-
-  var x = document.getElementById("navigation");
-  if (x.className === "top-menu") {
-    x.className += " menu-bar";
-  } else {
-    x.className = "top-menu";
-  }
-
-});
 
 const tabs = document.querySelectorAll('[data-tab-target]')
 const tabContents = document.querySelectorAll('[data-tab-content]')
