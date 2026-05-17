@@ -548,7 +548,7 @@ const portfolioProjects = {
     'project-3': {
         image: "/static/images/tab3.jpg",
         demo_url: "#",
-        github_url: "#",
+        github_url: "https://github.com/PavelGRI333/profile",
         tech_stack: ["Python", "FastAPI", "PostgreSQL", "Docker", "JavaScript"]
     }
 };
