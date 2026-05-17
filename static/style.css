@@ -546,6 +546,45 @@ span.colored {
       width: 70%;
   }
 }
+//changes
+@media screen and (max-width: 650px) {
+    #billboard {
+        margin-bottom: 60px;
+    }
+    
+    #billboard img.banner-image {
+        height: 400px;
+        object-fit: cover;
+        object-position: center;
+    }
+    
+    #billboard .banner-content {
+        position: relative;
+        margin: -100px 20px 0 20px;
+        width: auto;
+        color: #333;
+        background: #fff;
+        padding: 30px 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    
+    #billboard .banner-header {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    .banner-content h1 {
+        font-size: 2em;
+        color: #222;
+    }
+    
+    .banner-content p {
+        font-size: 1em;
+        color: #666;
+        padding-bottom: 20px;
+    }
+}
 
 /*----- Social Links
 -------------------------------*/
