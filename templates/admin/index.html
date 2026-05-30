@@ -181,6 +181,29 @@
             <!-- Таблица заявок загрузится через JS -->
             <div style="text-align: center; padding: 50px;">Загрузка...</div>
         </div>
+        <!-- Portfolio Management Section -->
+        <div class="admin-header" style="margin-top:40px;">
+            <h1 class="admin-title">📁 Portfolio Management</h1>
+        </div>
+        <div id="portfolioContainer" style="margin-top:20px;">
+            <!-- Portfolio list will load here -->
+            <div style="text-align:center;padding:50px;">Loading portfolio...</div>
+        </div>
+        <div id="portfolioFormContainer" style="margin-top:20px;">
+            <h2>Add / Edit Portfolio Item</h2>
+            <form id="portfolioForm">
+                <input type="hidden" id="portfolioId" name="id" />
+                <div><label>Title:<br/><input type="text" id="title" required /></label></div>
+                <div><label>Category:<br/><input type="text" id="category" required /></label></div>
+                <div><label>Description (HTML):<br/><textarea id="description" rows="4" required></textarea></label></div>
+                <div><label>Image URL:<br/><input type="text" id="image_url" required /></label></div>
+                <div><label>Demo URL:<br/><input type="text" id="demo_url" /></label></div>
+                <div><label>GitHub URL:<br/><input type="text" id="github_url" /></label></div>
+                <div><label>Tech Stack (comma separated):<br/><input type="text" id="tech_stack" required /></label></div>
+                <div><label>Order:<br/><input type="number" id="order" value="0" /></label></div>
+                <button type="submit" class="action-btn btn-view" style="margin-top:10px;">Save</button>
+            </form>
+        </div>
     </div>
 </div>
 

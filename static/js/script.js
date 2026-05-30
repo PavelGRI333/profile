@@ -508,26 +508,47 @@ const translations = {
 // Portfolio Data (только неизменяемые данные)
 // ============================================
 
-const portfolioProjects = {
-    'automation-1': {
-        image: "/static/images/tab1.jpg",
-        demo_url: "#",
-        github_url: "#",
-        tech_stack: ["Python 3.12", "Playwright", "BeautifulSoup4", "Automation", "Email Alerts", "VPS"]
-    },
-    'automation-2': {
-        image: "/static/images/tab2.jpg",
-        demo_url: "#",
-        github_url: "https://github.com/PavelGRI333/quizapi",
-        tech_stack: ["Python 3.12", "FastAPI", "PostgreSQL", "SQLAlchemy", "Docker", "Pydantic"]
-    },
-    'project-3': {
-        image: "/static/images/tab3.jpg",
-        demo_url: "#",
-        github_url: "https://github.com/PavelGRI333/profile",
-        tech_stack: ["Python", "FastAPI", "PostgreSQL", "Docker", "JavaScript"]
-    }
-};
+// Portfolio data will be loaded dynamically via fetchAndRenderPortfolio()
+function fetchAndRenderPortfolio() {
+    fetch('/api/v1/portfolio')
+        .then(res => {
+            if (!res.ok) throw new Error('Network response was not ok');
+            return res.json();
+        })
+        .then(data => {
+            // Store data for modal usage
+            window.portfolioData = {};
+            const container = document.querySelector('#portfolio .tab-element');
+            if (!container) return;
+            container.innerHTML = '';
+            data.forEach(item => {
+                // Save to global map by id
+                window.portfolioData[item.id] = item;
+                const figure = document.createElement('figure');
+                figure.setAttribute('data-project-id', item.id);
+                figure.innerHTML = `
+                    <span style="cursor:pointer; display:block;">
+                        <img src="${item.image_url}" class="tab-image" alt="${item.title}">
+                    </span>
+                    <figcaption>
+                        <div class="caption">
+                            <h3>${item.title}</h3>
+                            <span class="category">${item.category}</span>
+                        </div>
+                        <span class="btn-arrow light" style="cursor:pointer;">
+                            <i class="icon icon-arrow-right"></i>
+                        </span>
+                    </figcaption>
+                `;
+                container.appendChild(figure);
+            });
+        })
+        .catch(err => console.error('Failed to load portfolio:', err));
+}
+// Call fetch on page load
+$(document).ready(function(){
+    fetchAndRenderPortfolio();
+});
 
 // ============================================
 // Portfolio Modal System
@@ -535,17 +556,16 @@ const portfolioProjects = {
 
 // Открытие модалки
 function openPortfolioModal(projectId) {
-    const project = portfolioProjects[projectId];
+    const project = window.portfolioData && window.portfolioData[projectId];
     if (!project) return;
 
     // Берём переводы из глобальной переменной
     const trans = window.portfolioTranslations && window.portfolioTranslations[projectId];
+    const title = trans ? trans.title : project.title;
+    const category = trans ? trans.category : project.category;
+    const description = trans ? trans.description : project.description;
 
-    const title = trans ? trans.title : projectId;
-    const category = trans ? trans.category : '';
-    const description = trans ? trans.description : '';
-
-    document.getElementById('modalImg').src = project.image;
+    document.getElementById('modalImg').src = project.image_url;
     document.getElementById('modalImg').alt = title;
     document.getElementById('modalTitle').textContent = title;
     document.getElementById('modalCategory').textContent = category;
@@ -607,27 +627,19 @@ function closePortfolioModal() {
         if (e.key === 'Escape') closePortfolioModal();
     });
 
-    // Карточки
-    var figures = document.querySelectorAll('.tab-element figure[data-project-id]');
-    figures.forEach(function(figure) {
-        var projectId = figure.getAttribute('data-project-id');
-
-        figure.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            openPortfolioModal(projectId);
-        });
-
-        // Блокируем ссылки внутри
-        var links = figure.querySelectorAll('a');
-        links.forEach(function(link) {
-            link.addEventListener('click', function(e) {
+    // Карточки - use delegation for dynamic content
+    var container = document.querySelector('.tab-element');
+    if (container) {
+        container.addEventListener('click', function(e) {
+            var figure = e.target.closest('figure[data-project-id]');
+            if (figure) {
                 e.preventDefault();
                 e.stopPropagation();
+                var projectId = figure.getAttribute('data-project-id');
                 openPortfolioModal(projectId);
-            });
+            }
         });
-    });
+    }
 })();
 
 //модалка для contact формы
