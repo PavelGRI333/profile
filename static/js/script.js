@@ -3,68 +3,68 @@
  * Config saved to config.json and <none>
  */
 
- (function($) {
+(function($) {
 
-  "use strict";
+"use strict";
 
-  // ------------------------------------------------------------------------------ //
-  // get path relative to javascript
-  // ------------------------------------------------------------------------------ //
+// ------------------------------------------------------------------------------ //
+// get path relative to javascript
+// ------------------------------------------------------------------------------ //
 
- $(document).ready(function(){
-	$('.service-slider').slick({
-      slidesToShow: 3,
-      slidesToScroll: 1,
-      autoplaySpeed: 2000,
-      dots: true,
-      responsive: [
-        {
-          breakpoint: 1500,
-          settings: {
-            slidesToShow: 2,
-            slidesToScroll: 2,
-          }
-        },
-        {
-          breakpoint: 800,
-          settings: {
-            slidesToShow: 1,
-            slidesToScroll: 1,
-            arrows: false,
-          }
-        }
-      ]
+$(document).ready(function(){
+$('.service-slider').slick({
+slidesToShow: 3,
+slidesToScroll: 1,
+autoplaySpeed: 2000,
+dots: true,
+responsive: [
+{
+breakpoint: 1500,
+settings: {
+slidesToShow: 2,
+slidesToScroll: 2,
+}
+},
+{
+breakpoint: 800,
+settings: {
+slidesToShow: 1,
+slidesToScroll: 1,
+arrows: false,
+}
+}
+]
 
-    });
+});
 
 
-	$('.testimonial-slider').slick({
-          autoplay: false,
-          autoplaySpeed: 4000,
-          fade: true,
-          prevArrow: $('.prev'),
-          nextArrow: $('.next'),
-	});
+$('.testimonial-slider').slick({
+autoplay: false,
+autoplaySpeed: 4000,
+fade: true,
+prevArrow: $('.prev'),
+nextArrow: $('.next'),
+});
 });
 
 //
 $('.menu-icon').on('click touchstart', 'a', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    var $this = $(this);
-    
-    // Защита от двойного срабатывания в Safari
-    if ($this.data('locked')) return;
-    $this.data('locked', true);
-    setTimeout(function() { $this.data('locked', false); }, 300);
-    
-    var x = document.getElementById("navigation");
-    if (x.className.indexOf("menu-bar") === -1) {
-        x.className = "top-menu menu-bar";
-    } else {
-        x.className = "top-menu";
-    }
+e.preventDefault();
+e.stopPropagation();
+
+var $this = $(this);
+
+// Protection against double-triggering in Safari
+if ($this.data('locked')) return;
+$this.data('locked', true);
+setTimeout(function() { $this.data('locked', false); }, 300);
+
+var x = document.getElementById("navigation");
+if (x.className.indexOf("menu-bar") === -1) {
+x.className = "top-menu menu-bar";
+} else {
+x.className = "top-menu";
+}
 });
 
 
@@ -73,19 +73,18 @@ const tabs = document.querySelectorAll('[data-tab-target]')
 const tabContents = document.querySelectorAll('[data-tab-content]')
 
 tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    const target = document.querySelector(tab.dataset.tabTarget)
-    tabContents.forEach(tabContent => {
-      tabContent.classList.remove('active')
-    })
-    tabs.forEach(tab => {
-      tab.classList.remove('active')
-    })
-    tab.classList.add('active')
-    target.classList.add('active')
-  })
+tab.addEventListener('click', () => {
+const target = document.querySelector(tab.dataset.tabTarget)
+tabContents.forEach(tabContent => {
+tabContent.classList.remove('active')
+})
+tabs.forEach(tab => {
+tab.classList.remove('active')
+})
+tab.classList.add('active')
+target.classList.add('active')
+})
 });
-
 
 
 })(jQuery);
@@ -94,8 +93,8 @@ tabs.forEach(tab => {
 // Language Switcher - Dropdown Style
 // ============================================
 (function() {
-    // Словарь переводов
-    const translations = {
+// Translations dictionary
+const translations = {
         ru: {
             nav_home: "Главная",
             nav_about: "Обо мне",
@@ -442,32 +441,7 @@ tabs.forEach(tab => {
         $('.section-title').eq(2).html(t.portfolio_title);
         $('#portfolio .btn-accent').html(t.portfolio_view_btn);
 
-        // Портфолио — карточки в HTML
-        $('.tab-element figure').eq(0).find('h3').text(t.project_1_title);
-        $('.tab-element figure').eq(0).find('.category').text(t.project_1_category);
-        $('.tab-element figure').eq(1).find('h3').text(t.project_2_title);
-        $('.tab-element figure').eq(1).find('.category').text(t.project_2_category);
-        $('.tab-element figure').eq(2).find('h3').text(t.project_3_title);
-        $('.tab-element figure').eq(2).find('.category').text(t.project_3_category);
-
-        // Портфолио — данные для модалки
-        window.portfolioTranslations = {
-            'automation-1': {
-                title: t.project_1_title,
-                category: t.project_1_category,
-                description: t.project_1_description
-            },
-            'automation-2': {
-                title: t.project_2_title,
-                category: t.project_2_category,
-                description: t.project_2_description
-            },
-            'project-3': {
-                title: t.project_3_title,
-                category: t.project_3_category,
-                description: t.project_3_description
-            }
-        };
+        // Portfolio dynamic data will be populated after fetching from API
 
         // Контакт
         $('#contact h2').html(t.contact_title);
@@ -525,7 +499,9 @@ tabs.forEach(tab => {
     });
 
     // Инициализация языка при загрузке
-    updateLanguage(currentLang);
+    $(document).ready(function(){
+        updateLanguage(currentLang);
+    });
 })();
 
 // ============================================
