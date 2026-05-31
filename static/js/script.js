@@ -548,6 +548,10 @@ function fetchAndRenderPortfolio() {
 // Call fetch on page load
 $(document).ready(function(){
     fetchAndRenderPortfolio();
+    // Apply translations to newly added portfolio cards
+    if (typeof updateLanguage === 'function') {
+        updateLanguage(currentLang);
+    }
 });
 
 // ============================================

@@ -380,8 +380,124 @@
         }
     }
 
-    // Загрузить заявки при загрузке страницы
+    // Portfolio functions
+    // Global map for admin portfolio items
+    let adminPortfolioData = {};
+    async function loadPortfolio() {
+        const container = document.getElementById('portfolioContainer');
+        container.innerHTML = '<div style="text-align:center;padding:50px;">Загрузка портфолио...</div>';
+        try {
+            const response = await fetch('/api/v1/portfolio');
+            if (!response.ok) throw new Error('Network response was not ok');
+            const data = await response.json();
+            // Populate global map
+            adminPortfolioData = {};
+            data.forEach(item => { adminPortfolioData[item.id] = item; });
+            if (!Array.isArray(data) || data.length === 0) {
+                container.innerHTML = '<div style="text-align:center;padding:50px;">Портфолио пусто</div>';
+                return;
+            }
+            let html = '<table class="messages-table"><thead><tr><th>ID</th><th>Title</th><th>Category</th><th>Order</th><th>Actions</th></tr></thead><tbody>';
+            data.forEach(item => {
+                html += `<tr>
+<td>${item.id}</td>
+<td>${escapeHtml(item.title)}</td>
+<td>${escapeHtml(item.category)}</td>
+<td>${item.order}</td>
+<td>
+<button class="action-btn btn-view" onclick="editPortfolioItem(${item.id})">✏️ Edit</button>
+<button class="action-btn btn-delete" onclick="deletePortfolioItem(${item.id})">🗑️ Delete</button>
+</td>
+</tr>`;
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        } catch (err) {
+            console.error('Failed to load portfolio:', err);
+            container.innerHTML = '<div style="text-align:center;padding:50px;color:red;">Ошибка загрузки портфолио</div>';
+        }
+    }
+
+    function editPortfolioItem(id) {
+        // Use cached data if available
+        const item = adminPortfolioData[id];
+        if (!item) {
+            // Fallback: reload portfolio and try again
+            loadPortfolio();
+            alert('Элемент не найден, список будет обновлён');
+            return;
+        }
+        document.getElementById('portfolioId').value = item.id;
+        document.getElementById('title').value = item.title || '';
+        document.getElementById('category').value = item.category || '';
+        document.getElementById('description').value = item.description || '';
+        document.getElementById('image_url').value = item.image_url || '';
+        document.getElementById('demo_url').value = item.demo_url || '';
+        document.getElementById('github_url').value = item.github_url || '';
+        document.getElementById('tech_stack').value = (item.tech_stack || []).join(', ');
+        document.getElementById('order').value = item.order || 0;
+        // Scroll to form
+        document.getElementById('portfolioFormContainer').scrollIntoView({behavior: 'smooth'});
+    }
+
+    async function deletePortfolioItem(id) {
+        if (!confirm('Вы уверены, что хотите удалить этот элемент портфолио?')) return;
+        try {
+            const response = await fetch(`/api/v1/portfolio/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                loadPortfolio();
+            } else {
+                const err = await response.json();
+                alert(err.detail || 'Ошибка при удалении');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Ошибка при удалении');
+        }
+    }
+
+    // Form submit handler
+    const portfolioForm = document.getElementById('portfolioForm');
+    if (portfolioForm) {
+        portfolioForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const id = document.getElementById('portfolioId').value.trim();
+            const payload = {
+                title: document.getElementById('title').value.trim(),
+                category: document.getElementById('category').value.trim(),
+                description: document.getElementById('description').value.trim(),
+                image_url: document.getElementById('image_url').value.trim(),
+                demo_url: document.getElementById('demo_url').value.trim(),
+                github_url: document.getElementById('github_url').value.trim(),
+                tech_stack: document.getElementById('tech_stack').value.split(',').map(s=>s.trim()).filter(Boolean),
+                order: parseInt(document.getElementById('order').value, 10) || 0
+            };
+            const url = id ? `/api/v1/portfolio/${id}` : '/api/v1/portfolio';
+            const method = id ? 'PUT' : 'POST';
+            try {
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (response.ok) {
+                    loadPortfolio();
+                    portfolioForm.reset();
+                    document.getElementById('portfolioId').value = '';
+                } else {
+                    const err = await response.json();
+                    alert(err.detail || 'Ошибка при сохранении');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Ошибка при сохранении');
+            }
+        });
+    }
+
+    // Загрузить заявки и портфолио при загрузке страницы
     loadMessages();
+    loadPortfolio();
 </script>
 
 <script src="/static/js/jquery-1.11.0.min.js"></script>
